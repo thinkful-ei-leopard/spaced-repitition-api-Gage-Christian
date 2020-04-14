@@ -123,16 +123,16 @@ describe.only('Language Endpoints', function () {
       )
     })
 
-    it.skip(`responds with 200 and user's languages`, () => {
+    it(`responds with 200 and user's languages`, () => {
       return supertest(app)
         .get(`/api/language/head`)
         .set('Authorization', helpers.makeAuthHeader(testUser))
         .expect(200)
         .expect({
           nextWord: headWord.original,
-          totalScore: 0,
           wordCorrectCount: 0,
-          wordIncorrectCount: 0
+          wordIncorrectCount: 0,
+          totalScore: 0
         })
     })
   })
