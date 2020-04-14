@@ -1,7 +1,7 @@
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe('Language Endpoints', function () {
+describe.only('Language Endpoints', function () {
   let db
 
   const testUsers = helpers.makeUsersArray()
@@ -102,8 +102,8 @@ describe('Language Endpoints', function () {
             expect(word).to.have.property('memory_value', 1)
             expect(word).to.have.property('correct_count', 0)
             expect(word).to.have.property('incorrect_count', 0)
-          })
         })
+      })
     })
   })
 
@@ -132,7 +132,7 @@ describe('Language Endpoints', function () {
           nextWord: headWord.original,
           totalScore: 0,
           wordCorrectCount: 0,
-          wordIncorrectCount: 0,
+          wordIncorrectCount: 0
         })
     })
   })
