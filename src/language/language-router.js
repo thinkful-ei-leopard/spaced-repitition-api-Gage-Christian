@@ -1,9 +1,10 @@
 const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
-const LL = require('./LinkedList')
+const LinkedList = require('./LinkedList')
 
 const languageRouter = express.Router()
+const jsonBodyParser = express.json()
 
 languageRouter
   .use(requireAuth)
@@ -51,12 +52,6 @@ languageRouter
         req.app.get('db'),
         req.language.id
       )
-      console.log({
-        nextWord: head.original,
-        wordCorrectCount: head.correct_count,
-        wordIncorrectCount: head.incorrect_count,
-        totalScore: head.total_score
-      })
       res.json({
         nextWord: head.original,
         wordCorrectCount: head.correct_count,
@@ -71,19 +66,19 @@ languageRouter
   })
 
 languageRouter
-  .post('/guess', async (req, res, next) => {
+  .post('/guess', jsonBodyParser, async (req, res, next) => {
     try {
       const { guess } = req.body
 
       if (!guess) {
         return res.status(400).json({
-          error: `Missing 'guess' in request body`
+          error: `Missing 'guess' in request body`,
         })
       }
 
       const words = await LanguageService.getLanguageWords(
         req.app.get('db'),
-        req.language.id
+        req.language.id 
       )
 
       if (!words) {
@@ -92,48 +87,46 @@ languageRouter
         })
       }
 
-      const LL = LanguageService.getLinkedList(words, req.language.head)
+      const LinkedList = LanguageService.getLinkedList(words, req.language.head)
 
-      const isCorrect = guess === LL.head.word.translation
-      const {
+      const isCorrect = guess === LinkedList.head.word.translation
+      const { 
         wordCorrectCount,
         wordIncorrectCount,
         answer
-      } = await LanguageService.updateLinkedList(LL, isCorrect)
+      } = await LanguageService.updateLinkedList(LinkedList, isCorrect)
 
       const updatedTotalScore = isCorrect
-        ? req.language.total_score + 1
-        : req.language.total_score - 1 < 0
-          ? 0
-          : req.language.total_score - 1
+      ? req.language.total_score + 1
+      : req.language.total_score -1 < 0
+        ? 0
+        : req.language.total_score -1
 
-      await LanguageService.updateLanguageHead(
+      await LanguageService.updateLanguageHead (
         req.app.get('db'),
         req.language.id,
-        LL.head.word.id,
+        LinkedList.head.word.id,
         updatedTotalScore
       )
 
-      await LanguageService.updateLanguageWords(req.app.get('db'), LL)
-
-      const newHead = await LanguageService.getLanguageHead(
+      const updatedLanguage = await LanguageService.updateLanguageWords(
         req.app.get('db'),
-        req.language.id
+        LinkedList
       )
-
       res.json({
-        nextWord: newHead.original,
-        totalScore: newHead.total_score,
+        nextWord: updatedLanguage.original,
+        totalScore: updatedLanguage.total_score,
         wordCorrectCount,
         wordIncorrectCount,
         answer,
         isCorrect
       })
-
       next()
-    } catch (error) {
+    }
+    catch(error) {
       next(error)
     }
+
   })
 
 
