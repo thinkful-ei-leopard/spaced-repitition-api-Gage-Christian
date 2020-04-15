@@ -53,10 +53,12 @@ languageRouter
         req.language.id
       )
       res.json({
-        nextWord: head.original,
+        currWord: head.original,
+        correctAnswer: head.translation,
         wordCorrectCount: head.correct_count,
         wordIncorrectCount: head.incorrect_count,
-        totalScore: head.total_score
+        totalScore: head.total_score,
+        nextWord: head.next
       })
       next()
     }
