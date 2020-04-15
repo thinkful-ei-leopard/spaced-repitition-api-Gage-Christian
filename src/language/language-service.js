@@ -1,4 +1,5 @@
 const LinkedList = require('./LinkedList')
+
 const LanguageService = {
   getUsersLanguage(db, user_id) {
     return db
@@ -103,7 +104,6 @@ const LanguageService = {
     }
 
     list.shiftHead(word.memory_value)
-
     return {
       wordCorrectCount: word.correct_count,
       wordIncorrectCount: word.incorrect_count,

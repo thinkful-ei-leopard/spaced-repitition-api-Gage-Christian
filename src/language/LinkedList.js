@@ -29,11 +29,11 @@ class LinkedList {
         const headWord = this.head.word
 
         let currentNode = this.head
-        let schwifty = shift
+        let shifty = shift
 
-        while (currentNode.next !== null && schwifty !== 0) {
+        while (currentNode.next !== null && shifty !== 0) {
             currentNode = currentNode.next
-            schwifty--
+            shifty--
         }
 
         if (currentNode.next === null) {

@@ -1,7 +1,7 @@
 const express = require('express')
 const LanguageService = require('./language-service')
 const { requireAuth } = require('../middleware/jwt-auth')
-const LinkedList = require('./LinkedList')
+const LL = require('./LinkedList')
 
 const languageRouter = express.Router()
 const jsonBodyParser = express.json()
@@ -87,14 +87,14 @@ languageRouter
         })
       }
 
-      const LinkedList = LanguageService.getLinkedList(words, req.language.head)
+      const LL = LanguageService.getLinkedList(words, req.language.head)
 
-      const isCorrect = guess === LinkedList.head.word.translation
-      const { 
+      const isCorrect = guess === LL.head.word.translation
+      let { 
         wordCorrectCount,
         wordIncorrectCount,
         answer
-      } = await LanguageService.updateLinkedList(LinkedList, isCorrect)
+      } = await LanguageService.updateLinkedList(LL, isCorrect)
 
       const updatedTotalScore = isCorrect
       ? req.language.total_score + 1
@@ -105,19 +105,21 @@ languageRouter
       await LanguageService.updateLanguageHead (
         req.app.get('db'),
         req.language.id,
-        LinkedList.head.word.id,
+        LL.head.word.id,
         updatedTotalScore
       )
 
-      const updatedLanguage = await LanguageService.updateLanguageWords(
+      await LanguageService.updateLanguageWords(req.app.get('db'), LL)
+
+      const updatedLanguage = await LanguageService.getLanguageHead(
         req.app.get('db'),
-        LinkedList
+        req.language.id
       )
       res.json({
         nextWord: updatedLanguage.original,
         totalScore: updatedLanguage.total_score,
-        wordCorrectCount,
-        wordIncorrectCount,
+        wordCorrectCount: updatedLanguage.correct_count,
+        wordIncorrectCount: updatedLanguage.incorrect_count,
         answer,
         isCorrect
       })
