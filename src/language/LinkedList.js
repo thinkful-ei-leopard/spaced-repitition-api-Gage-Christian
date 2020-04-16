@@ -1,52 +1,52 @@
 class _Node {
-    constructor(word, next) {
-        this.word = word
-        this.next = next
-    }
+  constructor(word, next) {
+    this.word = word;
+    this.next = next;
+  }
 }
 
 class LinkedList {
-    constructor() {
-        this.head = null
+  constructor() {
+    this.head = null;
+  }
+
+  insert(word) {
+    if (this.head === null) {
+      this.head = new _Node(word, null);
+      return;
     }
 
-    insert(word) {
-        if (this.head === null) {
-            this.head = new _Node(word, null)
-            return
-        }
-
-        let currentNode = this.head
+    let currentNode = this.head;
         
-        while (currentNode.next !== null) {
-            currentNode = currentNode.next
-        }
-
-        currentNode.next = new _Node(word, null)
+    while (currentNode.next !== null) {
+      currentNode = currentNode.next;
     }
 
-    shiftHead(shift) {
-        const headWord = this.head.word
+    currentNode.next = new _Node(word, null);
+  }
 
-        let currentNode = this.head
-        let shifty = shift
+  shiftHead(shift) {
+    const headWord = this.head.word;
 
-        while (currentNode.next !== null && shifty !== 0) {
-            currentNode = currentNode.next
-            shifty--
-        }
+    let currentNode = this.head;
+    let shifty = shift;
 
-        if (currentNode.next === null) {
-            headWord.next = null
-        } else {
-            headWord.next = currentNode.next.word.id
-        }
-
-        currentNode.next = new _Node(headWord, currentNode.next) 
-        currentNode.word.next = headWord.id
-
-        this.head = this.head.next
+    while (currentNode.next !== null && shifty !== 0) {
+      currentNode = currentNode.next;
+      shifty--;
     }
+
+    if (currentNode.next === null) {
+      headWord.next = null;
+    } else {
+      headWord.next = currentNode.next.word.id;
+    }
+
+    currentNode.next = new _Node(headWord, currentNode.next); 
+    currentNode.word.next = headWord.id;
+
+    this.head = this.head.next;
+  }
 }
 
-module.exports = LinkedList
+module.exports = LinkedList;

@@ -1,4 +1,4 @@
-const LinkedList = require('./LinkedList')
+const LinkedList = require('./LinkedList');
 
 const LanguageService = {
   getUsersLanguage(db, user_id) {
@@ -12,7 +12,7 @@ const LanguageService = {
         'language.total_score',
       )
       .where('language.user_id', user_id)
-      .first()
+      .first();
   },
 
   getLanguageWords(db, language_id) {
@@ -28,12 +28,12 @@ const LanguageService = {
         'correct_count',
         'incorrect_count',
       )
-      .where({ language_id })
+      .where({ language_id });
   },
 
   updateLanguageWords(db, list) {
     return db.transaction(async trx => {
-      let currentNode = list.head
+      let currentNode = list.head;
       
       while (currentNode !== null) {
         await trx
@@ -44,10 +44,10 @@ const LanguageService = {
             correct_count: currentNode.word.correct_count,
             incorrect_count: currentNode.word.incorrect_count,
             next: currentNode.word.next
-          })
-          currentNode = currentNode.next
+          });
+        currentNode = currentNode.next;
       }
-    })
+    });
   },
 
   
@@ -63,7 +63,7 @@ const LanguageService = {
         'word.incorrect_count',
         'language.total_score'
       )
-      .first()
+      .first();
   },
 
   updateLanguageHead(db, langId, newHeadId, updatedTotalScore) {
@@ -73,43 +73,43 @@ const LanguageService = {
       .update({
         head: newHeadId,
         total_score: updatedTotalScore
-      })
+      });
   },
 
   getLinkedList(words, headId) {
-    const LL = new LinkedList()
+    const LL = new LinkedList();
 
-    let nextId = headId
+    let nextId = headId;
 
     while (nextId !== null) {
       for (let i = 0; i < words.length; i++) {
         if (words[i].id === nextId) {
-          nextId = words[i].next
-          LL.insert(words[i])
+          nextId = words[i].next;
+          LL.insert(words[i]);
         }
       }
     }
 
-    return LL
+    return LL;
   },
 
   updateLinkedList(list, correct) {
-    const { word } = list.head
+    const { word } = list.head;
     if (correct) {
-      word.correct_count += 1
-      word.memory_value *= 2
+      word.correct_count += 1;
+      word.memory_value *= 2;
     } else {
-      word.incorrect_count += 1
-      word.memory_value = 1
+      word.incorrect_count += 1;
+      word.memory_value = 1;
     }
 
-    list.shiftHead(word.memory_value)
+    list.shiftHead(word.memory_value);
     return {
       wordCorrectCount: word.correct_count,
       wordIncorrectCount: word.incorrect_count,
       answer: word.translation
-    }
+    };
 
   }
-}
-module.exports = LanguageService
+};
+module.exports = LanguageService;
