@@ -100,9 +100,9 @@ languageRouter
 
       const updatedTotalScore = isCorrect
         ? req.language.total_score + 1
-        : req.language.total_score -1 < 0
-          ? 0
-          : req.language.total_score -1;
+        : req.language.total_score > 0
+          ? req.language.total_score -1
+          : 0;
 
       await LanguageService.updateLanguageHead (
         req.app.get('db'),
@@ -112,16 +112,10 @@ languageRouter
       );
 
       await LanguageService.updateLanguageWords(req.app.get('db'), LL);
-
-      const updatedLanguage = await LanguageService.getLanguageHead(
-        req.app.get('db'),
-        req.language.id
-      );
       res.json({
-        nextWord: updatedLanguage.original,
-        totalScore: updatedLanguage.total_score,
-        wordCorrectCount: updatedLanguage.correct_count,
-        wordIncorrectCount: updatedLanguage.incorrect_count,
+        totalScore: updatedTotalScore,
+        wordCorrectCount,
+        wordIncorrectCount,
         answer,
         isCorrect
       });
